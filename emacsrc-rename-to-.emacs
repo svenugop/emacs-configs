@@ -1,5 +1,5 @@
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
-(add-to-list 'load-path "/home/shreyas/.emacs.d/lisp")
+(add-to-list 'load-path "~/.emacs.d/lisp")
 
 ; Uncomment following line if you want to indicate the 80th character column
 (require 'fill-column-indicator)
@@ -28,11 +28,16 @@
 (add-hook 'c++-mode-hook 'fci-mode)
 
 ;; enable modes by default
-(xterm-mouse-mode t)
+;;(xterm-mouse-mode t)
 (cua-mode t)
 (setq cua-auto-tabify-rectangles nil) ;; Don't tabify after rectangle commands
 (transient-mark-mode 1) ;; No region when it is not highlighted
 (setq cua-keep-region-after-copy t) ;; Standard Windows behaviour
+;; Enable ido-mode by default
+(setq ido-enable-flex-matching t) ; Allows for flex matching on word initials
+(setq ido-everywhere t) ; set ido-everywhere true so that ido used in buffers/files
+(ido-mode 1)
+
 
 ;;; Finding stuff using vc-git-grep
 ;;;Better git grep (from https://www.ogre.com/node/447)
@@ -52,6 +57,12 @@
   (grep-find (concat "git --no-pager grep -P -n "
 		     (shell-quote-argument search)
 		     " `git rev-parse --show-toplevel`")))
+
+;; Use hippie-expand for expand key
+(global-set-key (kbd "M-/") 'hippie-expand)
+
+;;; 3b - Hippie expand
+(setq hippie-expand-try-functions-list '(try-expand-dabbrev try-expand-dabbrev-all-buffers try-expand-dabbrev-from-kill try-complete-file-name-partially try-complete-file-name try-expand-all-abbrevs try-expand-list try-expand-line try-complete-lisp-symbol-partially try-complete-lisp-symbol))
 
 ;; Map this to f3 for easy access
 (global-set-key (kbd "<f3>") 'git-grep-repo)
@@ -75,3 +86,18 @@
 
 ;; to list all open buffers in emacs
 (global-set-key (kbd "M-b") 'list-buffers)
+
+;; jumping between header and source
+;;; This is specific to the repo structure for engine team work
+;;; It helps ff-find-other-file be able to jump to the correct header/src
+;;; inside the video_analysis libraries
+;;(setq ff-always-in-other-window t)
+(setq cc-search-directories '("."
+			      "../src/"
+			      "../include/"
+			      "../include/*/*"
+			      "../../src/"
+			      "../../src/*/*"
+			      "../../include/*/*"
+			      "../../../src/*/*"))
+(global-set-key (kbd "C-c f") 'ff-find-other-file)
